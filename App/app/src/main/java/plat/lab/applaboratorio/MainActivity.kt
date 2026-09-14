@@ -27,14 +27,24 @@ class MainActivity : ComponentActivity() {
                     val navController = rememberNavController()
                     NavHost(
                         navController = navController,
-                        startDestination = "",
+                        startDestination = LoginDestination,
                         modifier = Modifier
                             .fillMaxSize()
                             .padding(innerPadding)
                     ) {
                         composable<LoginDestination> {
-                            //importar el composable de la pantalla de Login
+                            Login(
+                                onEmpezar = {
+                                    navController.navigate(
+                                        route = CharacterListDestination){
+                                            popUpTo(LoginDestination){
+                                                inclusive = true
+                                            }
+                                    }
+                                }
+                            )
                         }
+
                         composable<CharacterListDestination> {
                             //importar el composable de la pantalla de Characters
                         }
