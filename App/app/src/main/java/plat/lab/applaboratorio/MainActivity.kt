@@ -11,6 +11,10 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
+import kotlinx.serialization.Serializable
 import plat.lab.applaboratorio.ui.theme.AppLaboratorioTheme
 
 class MainActivity : ComponentActivity() {
@@ -20,28 +24,36 @@ class MainActivity : ComponentActivity() {
         setContent {
             AppLaboratorioTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    Greeting(
-                        name = "Android",
-                        modifier = Modifier.padding(innerPadding)
-                    )
+                    val navController = rememberNavController()
+                    NavHost(
+                        navController = navController,
+                        startDestination = "",
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(innerPadding)
+                    ) {
+                        composable<LoginDestination> {
+                            //importar el composable de la pantalla de Login
+                        }
+                        composable<CharacterListDestination> {
+                            //importar el composable de la pantalla de Characters
+                        }
+                        composable<CharacterDetailsDestination> {
+                            //importar el composable de la pantalla de CharacterDetails
+                        }
+                    }
                 }
             }
         }
     }
 }
+@Serializable
+data object LoginDestination
 
-@Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello $name!",
-        modifier = modifier
-    )
-}
+@Serializable
+data object CharacterListDestination
 
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview() {
-    AppLaboratorioTheme {
-        Greeting("Android")
-    }
-}
+@Serializable
+data class CharacterDetailsDestination(
+    val id: Int
+)
