@@ -14,6 +14,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.toRoute
 import kotlinx.serialization.Serializable
 import plat.lab.applaboratorio.ui.theme.AppLaboratorioTheme
 
@@ -46,10 +47,21 @@ class MainActivity : ComponentActivity() {
                         }
 
                         composable<CharacterListDestination> {
-                            //importar el composable de la pantalla de Characters
+                            CharacterList(
+                                onCharacterClick = { id ->
+                                    navController.navigate(CharacterDetailsDestination(id)) }
+                            )
                         }
-                        composable<CharacterDetailsDestination> {
-                            //importar el composable de la pantalla de CharacterDetails
+
+                        composable<CharacterDetailsDestination> { backStackEntry ->
+                            val destination: CharacterDetailsDestination = backStackEntry.toRoute()
+                            CharacterDetails(id = destination.id,
+                                onBackArrow = {
+                                    navController.navigate(
+                                        route = CharacterListDestination){
+                                    }
+                                }
+                            )
                         }
                     }
                 }
@@ -57,6 +69,7 @@ class MainActivity : ComponentActivity() {
         }
     }
 }
+
 @Serializable
 data object LoginDestination
 
