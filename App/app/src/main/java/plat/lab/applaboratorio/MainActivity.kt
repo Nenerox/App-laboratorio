@@ -4,15 +4,6 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Scaffold
-import androidx.compose.ui.Modifier
-import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
-import androidx.navigation.compose.rememberNavController
-import androidx.navigation.toRoute
-import kotlinx.serialization.Serializable
 import plat.lab.applaboratorio.ui.theme.AppLaboratorioTheme
 
 class MainActivity : ComponentActivity() {
@@ -21,60 +12,8 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             AppLaboratorioTheme {
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    val navController = rememberNavController()
-                    NavHost(
-                        navController = navController,
-                        startDestination = LoginDestination,
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .padding(innerPadding)
-                    ) {
-                        composable<LoginDestination> {
-                            Login(
-                                onEmpezar = {
-                                    navController.navigate(
-                                        route = CharacterListDestination){
-                                            popUpTo(LoginDestination){
-                                                inclusive = true
-                                            }
-                                    }
-                                }
-                            )
-                        }
-
-                        composable<CharacterListDestination> {
-                            CharacterList(
-                                onCharacterClick = { id ->
-                                    navController.navigate(
-                                        route = CharacterDetailsDestination(id)) }
-                            )
-                        }
-
-                        composable<CharacterDetailsDestination> { backStackEntry ->
-                            val destination: CharacterDetailsDestination = backStackEntry.toRoute()
-                            CharacterDetails(id = destination.id,
-                                onBackArrow = {
-                                    navController.navigate(
-                                        route = CharacterListDestination){
-                                    }
-                                }
-                            )
-                        }
-                    }
-                }
+                NavigationHost()
             }
         }
     }
 }
-
-@Serializable
-data object LoginDestination
-
-@Serializable
-data object CharacterListDestination
-
-@Serializable
-data class CharacterDetailsDestination(
-    val id: Int
-)

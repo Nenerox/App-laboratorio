@@ -1,4 +1,4 @@
-package plat.lab.applaboratorio
+package plat.lab.applaboratorio.character.ui.list
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -23,6 +23,8 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
+import plat.lab.applaboratorio.Character
+import plat.lab.applaboratorio.CharacterDb
 
 @Composable
 fun CharacterPlate(modifier: Modifier = Modifier,
