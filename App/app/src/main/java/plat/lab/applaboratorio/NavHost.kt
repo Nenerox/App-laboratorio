@@ -25,6 +25,8 @@ import plat.lab.applaboratorio.locations.locationsNestNav
 import plat.lab.applaboratorio.locations.ui.details.LocationDetailsDestination
 import plat.lab.applaboratorio.login.ui.LoginDestination
 import plat.lab.applaboratorio.login.ui.loginScreen
+import plat.lab.applaboratorio.login.ui.navigateToLogin
+import plat.lab.applaboratorio.profile.ui.profile.profileScreen
 
 
 @Composable
@@ -87,6 +89,13 @@ fun NavigationHost(
             )
             characterNestNav(navController)
             locationsNestNav(navController)
+            profileScreen(
+                onCerrarSesion = {
+                    navController.navigateToLogin(
+                        navOptions { popUpTo(0) }
+                    )
+                }
+            )
         }
     }
 }

@@ -3,6 +3,7 @@ package plat.lab.applaboratorio
 import androidx.annotation.DrawableRes
 import plat.lab.applaboratorio.character.CharacterNestNav
 import plat.lab.applaboratorio.locations.LocationNestNav
+import plat.lab.applaboratorio.profile.ui.profile.ProfileDestination
 
 data class BottomBarDestination(
     val route: Any,
@@ -23,7 +24,7 @@ val bottomBarDestinations = listOf(
         icon = R.drawable.location_logo
     ),
     BottomBarDestination(
-        route = "", //TODO agregar el route de locations
+        route = ProfileDestination,
         label = "Profile",
         icon = R.drawable.profile_logo
     )
