@@ -21,6 +21,8 @@ import androidx.navigation.navOptions
 import plat.lab.applaboratorio.character.characterNestNav
 import plat.lab.applaboratorio.character.navigateToCharacterNest
 import plat.lab.applaboratorio.character.ui.details.CharacterDetailsDestination
+import plat.lab.applaboratorio.locations.locationsNestNav
+import plat.lab.applaboratorio.locations.ui.details.LocationDetailsDestination
 import plat.lab.applaboratorio.login.ui.LoginDestination
 import plat.lab.applaboratorio.login.ui.loginScreen
 
@@ -36,8 +38,8 @@ fun NavigationHost(
 
     val mostrarBottomBar = currentDestination != null &&
             !currentDestination.hasRoute<LoginDestination>() &&
-            !currentDestination.hasRoute<CharacterDetailsDestination>()
-            //TODO agregar el route de detailsLocation
+            !currentDestination.hasRoute<CharacterDetailsDestination>() &&
+            !currentDestination.hasRoute<LocationDetailsDestination>()
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
@@ -84,6 +86,7 @@ fun NavigationHost(
                 }
             )
             characterNestNav(navController)
+            locationsNestNav(navController)
         }
     }
 }
