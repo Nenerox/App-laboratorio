@@ -22,9 +22,32 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
+import androidx.navigation.NavGraphBuilder
+import androidx.navigation.NavOptions
+import androidx.navigation.compose.composable
 import coil.compose.AsyncImage
+import kotlinx.serialization.Serializable
 import plat.lab.applaboratorio.Character
 import plat.lab.applaboratorio.CharacterDb
+
+@Serializable
+data object CharacterListDestination
+
+fun NavController.navigateToCharacters(navOptions: NavOptions? = null) {
+    navigate(CharacterListDestination, navOptions)
+}
+
+fun NavGraphBuilder.charactersScreen(onCharacterClick: (Int) -> Unit) {
+    composable<CharacterListDestination> {
+        CharacterListRoute(onCharacterClick = onCharacterClick)
+    }
+}
+
+@Composable
+fun CharacterListRoute(onCharacterClick: (Int) -> Unit) {
+    CharacterList(onCharacterClick = onCharacterClick)
+}
 
 @Composable
 fun CharacterPlate(modifier: Modifier = Modifier,
@@ -59,7 +82,7 @@ fun CharacterPlate(modifier: Modifier = Modifier,
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CharacterList(modifier: Modifier = Modifier,
+private fun CharacterList(modifier: Modifier = Modifier,
                   onCharacterClick: (Int) -> Unit){
     val CharacterList: List<Character>
     CharacterList = CharacterDb().getAllCharacters()

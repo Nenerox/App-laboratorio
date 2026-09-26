@@ -6,24 +6,15 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import androidx.navigation.toRoute
-import kotlinx.serialization.Serializable
-import plat.lab.applaboratorio.character.ui.details.CharacterDetails
-import plat.lab.applaboratorio.character.ui.list.CharacterList
-import plat.lab.applaboratorio.login.ui.Login
+import androidx.navigation.navOptions
+import plat.lab.applaboratorio.character.ui.details.characterDetailScreen
+import plat.lab.applaboratorio.character.ui.details.navigateToCharacterDetail
+import plat.lab.applaboratorio.character.ui.list.charactersScreen
+import plat.lab.applaboratorio.character.ui.list.navigateToCharacters
+import plat.lab.applaboratorio.login.ui.LoginDestination
+import plat.lab.applaboratorio.login.ui.loginScreen
 
-@Serializable
-data object LoginDestination
-
-@Serializable
-data object CharacterListDestination
-
-@Serializable
-data class CharacterDetailsDestination(
-    val id: Int
-)
 
 @Composable
 fun NavigationHost(
@@ -33,47 +24,22 @@ fun NavigationHost(
         val navController = rememberNavController()
         NavHost(
             navController = navController,
-            startDestination = LoginDestination,
+            startDestination =  LoginDestination,
             modifier = Modifier
                 .fillMaxSize()
                 .padding(innerPadding)
         ) {
-            composable<LoginDestination> {
-                Login(
-                    onEmpezar = {
-                        navController.navigate(
-                            route = CharacterListDestination
-                        ) {
-                            popUpTo(LoginDestination) {
-                                inclusive = true
-                            }
-                        }
-                    }
-                )
-            }
+            loginScreen(
+                onEmpezar = {
+                    navController.navigateToCharacters(
+                        navOptions { popUpTo(LoginDestination) { inclusive = true } }
+                    )
+                }
+            )
 
-            composable<CharacterListDestination> {
-                CharacterList(
-                    onCharacterClick = { id ->
-                        navController.navigate(
-                            route = CharacterDetailsDestination(id)
-                        )
-                    }
-                )
-            }
+            charactersScreen(onCharacterClick = { id -> navController.navigateToCharacterDetail(id) })
+            characterDetailScreen(onBackArrow = { navController.navigateToCharacters() })
 
-            composable<CharacterDetailsDestination> { backStackEntry ->
-                val destination: CharacterDetailsDestination = backStackEntry.toRoute()
-                CharacterDetails(
-                    id = destination.id,
-                    onBackArrow = {
-                        navController.navigate(
-                            route = CharacterListDestination
-                        ) {
-                        }
-                    }
-                )
-            }
         }
     }
 }

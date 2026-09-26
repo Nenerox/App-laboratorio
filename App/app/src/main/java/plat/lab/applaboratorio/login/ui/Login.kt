@@ -17,10 +17,34 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
+import androidx.navigation.NavGraphBuilder
+import androidx.navigation.NavOptions
+import androidx.navigation.compose.composable
+import kotlinx.serialization.Serializable
 import plat.lab.applaboratorio.R
 
+@Serializable
+data object LoginDestination
+
+fun NavController.navigateToLogin(navOptions: NavOptions? = null) {
+    navigate(LoginDestination, navOptions)
+}
+
+fun NavGraphBuilder.loginScreen(onEmpezar: () -> Unit) {
+    composable<LoginDestination> {
+        LoginRoute(onEmpezar = onEmpezar)
+    }
+}
+
 @Composable
-fun Login(modifier: Modifier = Modifier,
+fun LoginRoute(onEmpezar: () -> Unit) {
+    Login(onEmpezar = onEmpezar)
+}
+
+
+@Composable
+private fun Login(modifier: Modifier = Modifier,
           onEmpezar: () -> Unit = {}){
     Column(modifier = modifier
         .fillMaxSize()
