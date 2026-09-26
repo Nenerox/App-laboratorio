@@ -21,6 +21,6 @@ fun NavController.navigateToCharacterNest(navOptions: NavOptions? = null) {
 fun NavGraphBuilder.characterNestNav(navController: NavController) {
     navigation<CharacterNestNav>(startDestination = CharacterListDestination){
         charactersScreen(onCharacterClick = { id -> navController.navigateToCharacterDetail(id) })
-        characterDetailScreen(onBackArrow = { navController.navigateToCharacters() })
+        characterDetailScreen(onBackArrow = { navController.navigateUp() })
     }
 }
