@@ -8,10 +8,8 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navOptions
-import plat.lab.applaboratorio.character.ui.details.characterDetailScreen
-import plat.lab.applaboratorio.character.ui.details.navigateToCharacterDetail
-import plat.lab.applaboratorio.character.ui.list.charactersScreen
-import plat.lab.applaboratorio.character.ui.list.navigateToCharacters
+import plat.lab.applaboratorio.character.characterNestNav
+import plat.lab.applaboratorio.character.navigateToCharacterNest
 import plat.lab.applaboratorio.login.ui.LoginDestination
 import plat.lab.applaboratorio.login.ui.loginScreen
 
@@ -31,15 +29,12 @@ fun NavigationHost(
         ) {
             loginScreen(
                 onEmpezar = {
-                    navController.navigateToCharacters(
+                    navController.navigateToCharacterNest(
                         navOptions { popUpTo(LoginDestination) { inclusive = true } }
                     )
                 }
             )
-
-            charactersScreen(onCharacterClick = { id -> navController.navigateToCharacterDetail(id) })
-            characterDetailScreen(onBackArrow = { navController.navigateToCharacters() })
-
+            characterNestNav(navController)
         }
     }
 }
