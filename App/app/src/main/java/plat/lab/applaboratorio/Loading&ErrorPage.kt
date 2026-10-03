@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -53,7 +54,7 @@ fun ErrorScreen(modifier: Modifier = Modifier,Error: String,onRetry: () -> Unit)
             color = MaterialTheme.colorScheme.error,
             textAlign = TextAlign.Center,
             modifier = modifier.padding(10.dp))
-        FilledTonalButton(onClick = onRetry) {
+        OutlinedButton(onClick = onRetry) {
             Text("Reintentar",
                 style = MaterialTheme.typography.labelLarge)
         }
