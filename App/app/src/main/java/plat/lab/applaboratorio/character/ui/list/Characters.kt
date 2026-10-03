@@ -35,9 +35,10 @@ import plat.lab.applaboratorio.Character
 import plat.lab.applaboratorio.CharacterDb
 import plat.lab.applaboratorio.ErrorScreen
 import plat.lab.applaboratorio.LoadingScreen
-import plat.lab.applaboratorio.character.VM.CharacterScreenEvent
-import plat.lab.applaboratorio.character.VM.CharacterScreenState
-import plat.lab.applaboratorio.character.VM.CharacterVM
+import plat.lab.applaboratorio.character.VM.CharacterList.CharacterScreenEvent
+import plat.lab.applaboratorio.character.VM.CharacterList.CharacterScreenState
+import plat.lab.applaboratorio.character.VM.CharacterList.CharacterVM
+
 
 @Serializable
 data object CharacterListDestination

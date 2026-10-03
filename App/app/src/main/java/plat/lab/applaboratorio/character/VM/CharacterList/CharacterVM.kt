@@ -1,4 +1,4 @@
-package plat.lab.applaboratorio.character.VM
+package plat.lab.applaboratorio.character.VM.CharacterList
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -10,7 +10,6 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import plat.lab.applaboratorio.CharacterDb
 import kotlin.time.Duration.Companion.seconds
-
 
 class CharacterVM : ViewModel() {
     private val _state = MutableStateFlow(CharacterScreenState())

@@ -1,4 +1,4 @@
-package plat.lab.applaboratorio.character.VM
+package plat.lab.applaboratorio.character.VM.CharacterList
 
 sealed interface CharacterScreenEvent {
     data object onLoadingScreen : CharacterScreenEvent
