@@ -1,7 +1,9 @@
 package plat.lab.applaboratorio.character.VM.CharacterList
 
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.navigation.toRoute
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -11,38 +13,37 @@ import kotlinx.coroutines.launch
 import plat.lab.applaboratorio.CharacterDb
 import plat.lab.applaboratorio.character.VM.CharacterDetails.CharacterDetailEvent
 import plat.lab.applaboratorio.character.VM.CharacterDetails.CharacterDetailScreenState
+import plat.lab.applaboratorio.character.ui.details.CharacterDetailsDestination
 import kotlin.time.Duration.Companion.seconds
 
-class CharacterDetailsVM : ViewModel() {
+class CharacterDetailsVM(savedStateHandle: SavedStateHandle) : ViewModel() {
+    private val currentId =
+        savedStateHandle.toRoute<CharacterDetailsDestination>().Id
     private val _state = MutableStateFlow(CharacterDetailScreenState())
     val state = _state.asStateFlow()
 
     private var job: Job? = null
-    private var currentId: Int? = null
+
+    init {
+        retry()
+    }
 
     fun onEvent(event: CharacterDetailEvent) {
         when (event) {
             CharacterDetailEvent.onRetry -> retry()
             CharacterDetailEvent.onLoadingScreen -> loading()
-            is CharacterDetailEvent.onCharacterClick -> characterClick(event.id)
         }
     }
+
     private fun retry(){
-        val id = currentId ?: return
         job?.cancel()
-        _state.update { it.copy(isLoading = true, hasError = false, data = CharacterDb().getCharacterById(id)) }
+        _state.update { it.copy(isLoading = true, hasError = false, data = CharacterDb().getCharacterById(currentId)) }
         startJob()
     }
 
     private fun loading(){
         job?.cancel()
         _state.update { it.copy(isLoading = false, hasError = true) }
-    }
-
-    private fun characterClick(id: Int) {
-        if (currentId == id) return
-        currentId = id
-        retry()
     }
 
     private fun startJob() {

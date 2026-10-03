@@ -52,10 +52,8 @@ fun NavController.navigateToCharacterDetail(
 }
 
 fun NavGraphBuilder.characterDetailScreen(onBackArrow: () -> Unit) {
-    composable<CharacterDetailsDestination> { backStackEntry ->
-        val destination = backStackEntry.toRoute<CharacterDetailsDestination>()
+    composable<CharacterDetailsDestination> {
         CharacterDetailRoute(
-            Id = destination.Id,
             onBackArrow = onBackArrow
         )
     }
@@ -63,17 +61,10 @@ fun NavGraphBuilder.characterDetailScreen(onBackArrow: () -> Unit) {
 
 @Composable
 fun CharacterDetailRoute(
-    Id: Int,
     onBackArrow: () -> Unit,
     viewModel: CharacterDetailsVM = viewModel()
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
-
-    LaunchedEffect(viewModel, Id) {
-        viewModel.onEvent(
-            CharacterDetailEvent.onCharacterClick(Id)
-        )
-    }
 
     CharacterDetails(
         onBackArrow = onBackArrow,
