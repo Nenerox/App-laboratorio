@@ -1,5 +1,6 @@
 package plat.lab.applaboratorio
 
+import android.se.omapi.Session
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -8,10 +9,14 @@ import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavDestination.Companion.hasRoute
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
@@ -22,6 +27,8 @@ import androidx.navigation.navOptions
 import plat.lab.applaboratorio.character.characterNestNav
 import plat.lab.applaboratorio.character.navigateToCharacterNest
 import plat.lab.applaboratorio.character.ui.details.CharacterDetailsDestination
+import plat.lab.applaboratorio.core.DatastorePreferences
+import plat.lab.applaboratorio.core.VM.SessionVM
 import plat.lab.applaboratorio.locations.locationsNestNav
 import plat.lab.applaboratorio.locations.ui.details.LocationDetailsDestination
 import plat.lab.applaboratorio.login.ui.LoginDestination
@@ -33,16 +40,19 @@ import plat.lab.applaboratorio.profile.ui.profile.profileScreen
 @Composable
 fun NavigationHost(
     modifier: Modifier = Modifier,
+    viewModel: SessionVM = viewModel()
 ) {
     val navController = rememberNavController()
 
     val backStackEntry by navController.currentBackStackEntryAsState()
     val currentDestination = backStackEntry?.destination
+    val isLogged by viewModel.isLogged.collectAsStateWithLifecycle()
 
     val mostrarBottomBar = currentDestination != null &&
             !currentDestination.hasRoute<LoginDestination>() &&
             !currentDestination.hasRoute<CharacterDetailsDestination>() &&
-            !currentDestination.hasRoute<LocationDetailsDestination>()
+            !currentDestination.hasRoute<LocationDetailsDestination>() &&
+            !currentDestination.hasRoute<LoadingDestination>()
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
@@ -79,11 +89,12 @@ fun NavigationHost(
     ) { innerPadding ->
         NavHost(
             navController = navController,
-            startDestination =  LoginDestination,
+            startDestination = LoadingDestination,
             modifier = Modifier
                 .fillMaxSize()
                 .padding(innerPadding)
         ) {
+            loadingScreen()
             loginScreen(
                 onEmpezar = {
                     navController.navigateToCharacterNest(
@@ -95,11 +106,21 @@ fun NavigationHost(
             locationsNestNav(navController)
             profileScreen(
                 onCerrarSesion = {
+                    viewModel.logout()
                     navController.navigateToLogin(
                         navOptions { popUpTo(0) }
                     )
                 }
             )
+        }
+        LaunchedEffect(isLogged) {
+            when (isLogged) {
+                null -> {}
+                false -> navController.navigateToLogin()
+                true -> navController.navigateToCharacterNest(
+                    navOptions { popUpTo(LoginDestination) { inclusive = true }
+                    })
+            }
         }
     }
 }

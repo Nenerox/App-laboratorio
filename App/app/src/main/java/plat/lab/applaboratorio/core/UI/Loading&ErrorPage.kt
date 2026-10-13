@@ -1,6 +1,5 @@
 package plat.lab.applaboratorio
 
-import android.text.Layout
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -9,20 +8,40 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
+import androidx.navigation.NavGraphBuilder
+import androidx.navigation.NavOptions
+import androidx.navigation.compose.composable
+import kotlinx.serialization.Serializable
 
+@Serializable
+data object LoadingDestination
+
+fun NavController.navigateToLoading(navOptions: NavOptions? = null) {
+    navigate(LoadingDestination, navOptions)
+}
+
+fun NavGraphBuilder.loadingScreen() {
+    composable<LoadingDestination> {
+        LoadingRoute()
+    }
+}
+
+@Composable
+fun LoadingRoute() {
+    LoadingScreen()
+}
 
 @Composable
 fun LoadingScreen(modifier: Modifier = Modifier,
