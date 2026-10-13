@@ -39,6 +39,7 @@ android {
 dependencies {
     implementation(platform("androidx.compose:compose-bom:2026.04.01"))
     implementation("io.coil-kt:coil-compose:2.6.0")
+    implementation(libs.androidx.datastore)
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.androidx.activity.compose)
     implementation(libs.androidx.compose.material3)
