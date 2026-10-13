@@ -19,6 +19,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -26,13 +27,16 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavOptions
 import androidx.navigation.compose.composable
 import kotlinx.serialization.Serializable
 import plat.lab.applaboratorio.R
-
+import plat.lab.applaboratorio.core.VM.SessionState
+import plat.lab.applaboratorio.core.VM.SessionVM
 
 @Serializable
 data object ProfileDestination
@@ -48,14 +52,20 @@ fun NavGraphBuilder.profileScreen(onCerrarSesion: () -> Unit) {
 }
 
 @Composable
-fun ProfileRoute(onCerrarSesion: () -> Unit) {
-    Profile(onCerrarSesion = onCerrarSesion)
+fun ProfileRoute(onCerrarSesion: () -> Unit,
+                 viewModel: SessionVM = viewModel()
+) {
+    val state by viewModel.state.collectAsStateWithLifecycle()
+    Profile(onCerrarSesion = onCerrarSesion,
+        state = state)
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun Profile(modifier: Modifier = Modifier,
-    onCerrarSesion: () -> Unit){
+                    onCerrarSesion: () -> Unit,
+                    state: SessionState
+){
     Scaffold(modifier = modifier.fillMaxSize(),
         topBar = {
             TopAppBar(
@@ -93,7 +103,7 @@ private fun Profile(modifier: Modifier = Modifier,
                     style = MaterialTheme.typography.bodyLarge
                 )
                 Text(
-                    "Andres Pineda",
+                    state.name,
                     style = MaterialTheme.typography.bodyLarge
                 )
             }
@@ -123,5 +133,5 @@ private fun Profile(modifier: Modifier = Modifier,
 @Preview(showBackground = true)
 @Composable
 fun ProfilePreview(){
-    Profile(onCerrarSesion = {})
+    Profile(onCerrarSesion = {}, state = SessionState())
 }
