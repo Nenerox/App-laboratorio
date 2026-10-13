@@ -98,7 +98,12 @@ fun NavigationHost(
             loginScreen(
                 onEmpezar = {
                     navController.navigateToCharacterNest(
-                        navOptions { popUpTo(LoginDestination) { inclusive = true } }
+                        navOptions {
+                            popUpTo(navController.graph.id) {
+                                inclusive = false
+                            }
+                            launchSingleTop = true
+                        }
                     )
                 }
             )
@@ -116,10 +121,18 @@ fun NavigationHost(
         LaunchedEffect(isLogged) {
             when (isLogged) {
                 null -> {}
-                false -> navController.navigateToLogin()
+                false -> navController.navigateToLogin(
+                    navOptions {
+                        popUpTo(navController.graph.id) { inclusive = false }
+                        launchSingleTop = true
+                    }
+                )
                 true -> navController.navigateToCharacterNest(
-                    navOptions { popUpTo(LoginDestination) { inclusive = true }
-                    })
+                    navOptions {
+                        popUpTo(navController.graph.id) { inclusive = false }
+                        launchSingleTop = true
+                    }
+                )
             }
         }
     }
