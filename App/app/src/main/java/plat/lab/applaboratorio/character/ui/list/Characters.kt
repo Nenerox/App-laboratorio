@@ -1,5 +1,6 @@
 package plat.lab.applaboratorio.character.ui.list
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -11,6 +12,9 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.IconToggleButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
@@ -20,7 +24,9 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -35,6 +41,7 @@ import plat.lab.applaboratorio.Character
 import plat.lab.applaboratorio.CharacterDb
 import plat.lab.applaboratorio.ErrorScreen
 import plat.lab.applaboratorio.LoadingScreen
+import plat.lab.applaboratorio.R
 import plat.lab.applaboratorio.character.VM.CharacterList.CharacterScreenEvent
 import plat.lab.applaboratorio.character.VM.CharacterList.CharacterScreenState
 import plat.lab.applaboratorio.character.VM.CharacterList.CharacterVM
@@ -61,37 +68,6 @@ fun CharacterListRoute(onCharacterClick: (Int) -> Unit,
     CharacterList(onCharacterClick = onCharacterClick,
         state = state,
         onEvent = viewModel::onEvent)
-}
-
-@Composable
-fun CharacterPlate(modifier: Modifier = Modifier,
-                   name: String,
-                   status: String,
-                   species: String,
-                   link: String)
-{
-    Row(
-        modifier = modifier
-            .fillMaxWidth()
-            .padding(15.dp),
-        horizontalArrangement = Arrangement.Start,
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        AsyncImage(
-            model = link,
-            contentDescription = "Character Image",
-            contentScale = ContentScale.Crop,
-            modifier = Modifier
-                .size(70.dp)
-                .clip(CircleShape)
-        )
-        Column(modifier = modifier.padding(start = 5.dp)) {
-            Text("$name",
-                style = MaterialTheme.typography.titleLarge)
-            Text("$species - $status",
-                style = MaterialTheme.typography.bodyLarge)
-        }
-    }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -132,12 +108,58 @@ private fun CharacterList(
                         status = CharacterList[it].status,
                         species = CharacterList[it].species,
                         link = CharacterList[it].image,
+                        isFavorite = CharacterList[it].isFavorite,
+                        onFavorite = {},
                         modifier = Modifier.clickable(
                             enabled = true,
                             onClick = { onCharacterClick(CharacterList[it].id) })
                     )
                 }
             }
+        }
+    }
+}
+
+@Composable
+fun CharacterPlate(modifier: Modifier = Modifier,
+                   name: String,
+                   status: String,
+                   species: String,
+                   link: String,
+                   isFavorite: Boolean = false,
+                   onFavorite: () -> Unit = {})
+{
+    Row(
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(15.dp),
+        horizontalArrangement = Arrangement.Start,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        AsyncImage(
+            model = link,
+            contentDescription = "Character Image",
+            contentScale = ContentScale.Crop,
+            modifier = Modifier
+                .size(70.dp)
+                .clip(CircleShape)
+        )
+        Column(modifier = modifier.padding(start = 5.dp).weight(1f)) {
+            Text("$name",
+                style = MaterialTheme.typography.titleLarge)
+            Text("$species - $status",
+                style = MaterialTheme.typography.bodyLarge)
+        }
+        IconButton(onClick = onFavorite) {
+            Image(painter = painterResource(id = R.drawable.favorite_star),
+                contentDescription = "Error",
+                colorFilter = if (isFavorite) {
+                    ColorFilter.tint(MaterialTheme.colorScheme.onPrimaryFixed)
+                } else {
+                    ColorFilter.tint(MaterialTheme.colorScheme.onSurface)
+                },
+                modifier = modifier.size(100.dp)
+            )
         }
     }
 }
