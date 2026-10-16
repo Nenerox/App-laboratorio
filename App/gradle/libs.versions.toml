@@ -12,7 +12,7 @@ navigationCompose = "2.10.1"
 kotlinSerialization = "1.11.0"
 material3 = "1.4.0"
 dataStore = "1.2.1"
-ksp = "2.0.21-1.0.27"
+ksp = "2.3.10"
 room = "2.8.1"
 
 

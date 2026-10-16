@@ -45,6 +45,7 @@ import plat.lab.applaboratorio.R
 import plat.lab.applaboratorio.character.VM.CharacterList.CharacterScreenEvent
 import plat.lab.applaboratorio.character.VM.CharacterList.CharacterScreenState
 import plat.lab.applaboratorio.character.VM.CharacterList.CharacterVM
+import plat.lab.applaboratorio.ui.theme.AppLaboratorioTheme
 
 
 @Serializable
@@ -167,15 +168,21 @@ fun CharacterPlate(modifier: Modifier = Modifier,
 @Preview(showBackground = true)
 @Composable
 fun CharacterLoadingPreview() {
-    CharacterList(onCharacterClick = {}, state = CharacterScreenState(isLoading = true, hasError = false), onEvent = {})
+    AppLaboratorioTheme {
+        CharacterList(onCharacterClick = {}, state = CharacterScreenState(isLoading = true, hasError = false), onEvent = {})
+    }
 }
 @Preview(showBackground = true)
 @Composable
 fun CharacterPreview() {
+    AppLaboratorioTheme {
     CharacterList(onCharacterClick = {}, state = CharacterScreenState(isLoading = false, hasError = false), onEvent = {})
+    }
 }
 @Preview(showBackground = true)
 @Composable
 fun CharacterErrorPreview() {
+    AppLaboratorioTheme {
     CharacterList(onCharacterClick = {}, state = CharacterScreenState(isLoading = false, hasError = true), onEvent = {})
+    }
 }

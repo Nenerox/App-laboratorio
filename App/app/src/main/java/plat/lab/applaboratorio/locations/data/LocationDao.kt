@@ -8,10 +8,10 @@ import kotlinx.coroutines.flow.Flow
 @Dao
 interface LocationDao {
     @Insert
-    suspend fun addLocations(locations: List<Location>)
+    suspend fun addLocations(locations: List<LocationEntity>)
 
     @Query("SELECT * FROM locationentity")
-    suspend fun getLocations(): Flow<List<LocationEntity>>
+    fun getLocations(): Flow<List<LocationEntity>>
 
     @Query("SELECT * FROM locationentity WHERE id = :id")
     suspend fun getLocationsById(id: Int): LocationEntity
