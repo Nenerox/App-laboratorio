@@ -2,6 +2,7 @@ package plat.lab.applaboratorio.character.data
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import plat.lab.applaboratorio.Character
 
 @Entity
 data class CharacterEntity(

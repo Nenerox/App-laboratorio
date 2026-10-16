@@ -4,6 +4,7 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.Query
 import kotlinx.coroutines.flow.Flow
+import plat.lab.applaboratorio.Character
 
 @Dao
 interface CharacterDao {

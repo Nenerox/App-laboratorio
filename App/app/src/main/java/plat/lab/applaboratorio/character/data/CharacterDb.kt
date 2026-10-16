@@ -1,4 +1,4 @@
-package plat.lab.applaboratorio.character.data
+package plat.lab.applaboratorio
 
 class CharacterDb {
     private val characters: List<Character> = listOf(

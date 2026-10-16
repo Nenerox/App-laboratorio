@@ -1,4 +1,4 @@
-package plat.lab.applaboratorio.character.data
+package plat.lab.applaboratorio
 
 data class Character(
     val id: Int,
