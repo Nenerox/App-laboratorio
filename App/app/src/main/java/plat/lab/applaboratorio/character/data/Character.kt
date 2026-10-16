@@ -1,4 +1,4 @@
-package plat.lab.applaboratorio
+package plat.lab.applaboratorio.character.data
 
 data class Character(
     val id: Int,
@@ -6,5 +6,6 @@ data class Character(
     val status: String,
     val species: String,
     val gender: String,
-    val image: String
+    val image: String,
+    val isFavorite: Boolean = false
 )
