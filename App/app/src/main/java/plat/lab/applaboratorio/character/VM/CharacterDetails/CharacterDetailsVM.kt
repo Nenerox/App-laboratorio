@@ -25,9 +25,10 @@ class CharacterDetailsVM(savedStateHandle: SavedStateHandle) : ViewModel() {
 
     private val characterDao = Dependencias.database.characterDao()
     private var job: Job? = null
+    private var dataJob: Job? = null
 
     init {
-        retry()
+        startJob()
     }
 
     fun onEvent(event: CharacterDetailEvent) {
@@ -43,7 +44,8 @@ class CharacterDetailsVM(savedStateHandle: SavedStateHandle) : ViewModel() {
     }
 
     private fun loadCharacter(){
-        viewModelScope.launch {
+        dataJob?.cancel()
+        dataJob = viewModelScope.launch {
             val entity = characterDao.getCharacterById(currentId)
             _state.update {
                 it.copy(data = entity.mapToModel())
@@ -53,14 +55,12 @@ class CharacterDetailsVM(savedStateHandle: SavedStateHandle) : ViewModel() {
 
     private fun retry(){
         job?.cancel()
-        loadCharacter()
         _state.update { it.copy(isLoading = true, hasError = false)}
         startJob()
     }
 
     private fun loading(){
         job?.cancel()
-        loadCharacter()
         _state.update { it.copy(isLoading = false, hasError = true) }
     }
 
