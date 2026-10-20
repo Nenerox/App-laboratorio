@@ -8,8 +8,13 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import plat.lab.applaboratorio.CharacterDb
 import plat.lab.applaboratorio.character.VM.CharacterDetails.CharacterDetailScreenState
 import plat.lab.applaboratorio.core.DatastorePreferences
+import plat.lab.applaboratorio.core.data.Dependencias
+import plat.lab.applaboratorio.locations.data.LocationDb
+import plat.lab.applaboratorio.locations.data.mapToEntity
+import plat.lab.applaboratorio.mapToEntity
 
 class SessionVM(application: Application): AndroidViewModel(application) {
 
@@ -37,8 +42,35 @@ class SessionVM(application: Application): AndroidViewModel(application) {
         }
     }
 
+    fun reiniciarDatos(){
+        viewModelScope.launch {
+            Dependencias.database.characterDao().deleteAllCharacters()
+            Dependencias.database.locationDao().deleteAllLocations()
+
+            val characterDao = Dependencias.database.characterDao()
+            val Characters = CharacterDb().getAllCharacters()
+
+            val locationDao = Dependencias.database.locationDao()
+            val locations = LocationDb().getAllLocations()
+
+            characterDao.addCharacters(
+                Characters.map {
+                    it.mapToEntity()
+                }
+            )
+            locationDao.addLocations(
+                locations.map {
+                    it.mapToEntity()
+                }
+            )
+        }
+
+
+    }
+
     init {
         viewModelScope.launch {
+            Dependencias.buildDatabase(application)
             val nombre = sessionPreferences.getNombre()
             _state.value = _state.value.copy(name = nombre)
         }

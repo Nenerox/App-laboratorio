@@ -97,6 +97,7 @@ fun NavigationHost(
             loadingScreen()
             loginScreen(
                 onEmpezar = {
+                    viewModel.reiniciarDatos()
                     navController.navigateToCharacterNest(
                         navOptions {
                             popUpTo(navController.graph.id) {
