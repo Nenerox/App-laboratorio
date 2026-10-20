@@ -9,7 +9,6 @@ import plat.lab.applaboratorio.character.ui.details.characterDetailScreen
 import plat.lab.applaboratorio.character.ui.details.navigateToCharacterDetail
 import plat.lab.applaboratorio.character.ui.list.CharacterListDestination
 import plat.lab.applaboratorio.character.ui.list.charactersScreen
-import plat.lab.applaboratorio.character.ui.list.navigateToCharacters
 
 @Serializable
 data object CharacterNestNav

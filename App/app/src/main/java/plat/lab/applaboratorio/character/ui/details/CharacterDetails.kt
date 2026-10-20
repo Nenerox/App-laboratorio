@@ -1,5 +1,6 @@
 package plat.lab.applaboratorio.character.ui.details
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -17,9 +18,12 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -32,13 +36,15 @@ import androidx.navigation.NavOptions
 import androidx.navigation.compose.composable
 import coil.compose.AsyncImage
 import kotlinx.serialization.Serializable
+import plat.lab.applaboratorio.CharacterDb
 import plat.lab.applaboratorio.ErrorScreen
 import plat.lab.applaboratorio.LoadingScreen
 import plat.lab.applaboratorio.R
 import plat.lab.applaboratorio.character.VM.CharacterDetails.CharacterDetailEvent
 import plat.lab.applaboratorio.character.VM.CharacterDetails.CharacterDetailScreenState
 import plat.lab.applaboratorio.character.VM.CharacterList.CharacterDetailsVM
-
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.setValue
 @Serializable
 data class CharacterDetailsDestination(val Id: Int)
 
@@ -113,7 +119,9 @@ private fun CharacterDetails(
                 }
             )
         } else {
-
+            var isFavorite by remember(character.id) {
+                mutableStateOf(character.isFavorite)
+            }
             AsyncImage(
                 model = character.image,
                 contentDescription = "Character Image",
@@ -123,11 +131,34 @@ private fun CharacterDetails(
                     .size(220.dp)
                     .clip(CircleShape)
             )
-
-            Text(
-                character.name,
-                style = MaterialTheme.typography.titleLarge
-            )
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Text(
+                    character.name,
+                    style = MaterialTheme.typography.titleLarge
+                )
+                IconButton(
+                    onClick = {
+                        isFavorite = !isFavorite
+                        onEvent(
+                            CharacterDetailEvent.onFavorite(
+                                id = character.id,
+                                isFavorite = isFavorite
+                            )
+                        )
+                    }
+                ) {
+                    Image(
+                        painter = painterResource(id = R.drawable.favorite_star),
+                        contentDescription = "Error",
+                        colorFilter = if (isFavorite) {
+                            ColorFilter.tint(MaterialTheme.colorScheme.onPrimaryFixed)
+                        } else {
+                            ColorFilter.tint(MaterialTheme.colorScheme.onSurface)
+                        },
+                        modifier = modifier.size(100.dp)
+                    )
+                }
+            }
 
             Row(
                 modifier = modifier.fillMaxWidth()
@@ -178,7 +209,7 @@ private fun CharacterDetails(
 @Preview(showBackground = true)
 @Composable
 fun CharacterDetailsPreview(){
-    CharacterDetails(onBackArrow = {}, state = CharacterDetailScreenState(isLoading = false, hasError = false), onEvent = {})
+    CharacterDetails(onBackArrow = {}, state = CharacterDetailScreenState(isLoading = false, hasError = false, data = CharacterDb().getCharacterById(1)), onEvent = {})
 }
 
 @Preview(showBackground = true)

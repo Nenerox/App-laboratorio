@@ -99,22 +99,59 @@ private fun CharacterList(
                 colors = TopAppBarDefaults.topAppBarColors(
                     containerColor = MaterialTheme.colorScheme.primaryContainer,
                     titleContentColor = MaterialTheme.colorScheme.primary,
-                )
+                ),
+                actions = {
+                    IconButton(onClick = { onEvent(CharacterScreenEvent.onFavoritesPage) }) {
+                        Image(
+                            painter = painterResource(id = R.drawable.favorites),
+                            contentDescription = null
+                        )
+                    }
+                }
             )
-
-            LazyColumn(modifier = modifier) {
-                items(CharacterList.size) { it ->
-                    CharacterPlate(
-                        name = CharacterList[it].name,
-                        status = CharacterList[it].status,
-                        species = CharacterList[it].species,
-                        link = CharacterList[it].image,
-                        isFavorite = CharacterList[it].isFavorite,
-                        onFavorite = {},
-                        modifier = Modifier.clickable(
-                            enabled = true,
-                            onClick = { onCharacterClick(CharacterList[it].id) })
-                    )
+            if (state.favorites){
+                if (CharacterList.isEmpty()){
+                    Column(modifier = modifier.fillMaxSize(),
+                        verticalArrangement = Arrangement.Center,
+                        horizontalAlignment = Alignment.CenterHorizontally)
+                    {
+                        Text("No hay personajes favoritos",
+                            style = MaterialTheme.typography.displayLarge)
+                    }
+                } else {
+                    LazyColumn(modifier = modifier) {
+                        items(CharacterList.size) { it ->
+                            CharacterPlate(
+                                name = CharacterList[it].name,
+                                status = CharacterList[it].status,
+                                species = CharacterList[it].species,
+                                link = CharacterList[it].image,
+                                isFavorite = CharacterList[it].isFavorite,
+                                onFavorite = {onEvent(CharacterScreenEvent.onFavorite
+                                    (id = CharacterList[it].id,
+                                    isFavorite = !CharacterList[it].isFavorite)
+                                )},
+                                onCharacterClick = { onCharacterClick(CharacterList[it].id) }
+                            )
+                        }
+                    }
+                }
+            } else {
+                LazyColumn(modifier = modifier) {
+                    items(CharacterList.size) { it ->
+                        CharacterPlate(
+                            name = CharacterList[it].name,
+                            status = CharacterList[it].status,
+                            species = CharacterList[it].species,
+                            link = CharacterList[it].image,
+                            isFavorite = CharacterList[it].isFavorite,
+                            onFavorite = {onEvent(CharacterScreenEvent.onFavorite
+                                (id = CharacterList[it].id,
+                                isFavorite = !CharacterList[it].isFavorite)
+                            )},
+                            onCharacterClick = { onCharacterClick(CharacterList[it].id) }
+                        )
+                    }
                 }
             }
         }
@@ -128,7 +165,8 @@ fun CharacterPlate(modifier: Modifier = Modifier,
                    species: String,
                    link: String,
                    isFavorite: Boolean = false,
-                   onFavorite: () -> Unit = {})
+                   onFavorite: () -> Unit = {},
+                   onCharacterClick: () -> Unit = {})
 {
     Row(
         modifier = modifier
@@ -144,8 +182,13 @@ fun CharacterPlate(modifier: Modifier = Modifier,
             modifier = Modifier
                 .size(70.dp)
                 .clip(CircleShape)
+                .clickable(onClick = onCharacterClick)
         )
-        Column(modifier = modifier.padding(start = 5.dp).weight(1f)) {
+        Column(modifier = modifier
+            .padding(start = 5.dp)
+            .weight(1f)
+            .clickable(onClick = onCharacterClick)
+        ) {
             Text("$name",
                 style = MaterialTheme.typography.titleLarge)
             Text("$species - $status",
@@ -176,7 +219,7 @@ fun CharacterLoadingPreview() {
 @Composable
 fun CharacterPreview() {
     AppLaboratorioTheme {
-    CharacterList(onCharacterClick = {}, state = CharacterScreenState(isLoading = false, hasError = false), onEvent = {})
+    CharacterList(onCharacterClick = {}, state = CharacterScreenState(isLoading = false, hasError = false, data = CharacterDb().getAllCharacters()), onEvent = {})
     }
 }
 @Preview(showBackground = true)

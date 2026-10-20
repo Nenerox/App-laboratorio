@@ -5,6 +5,6 @@ import plat.lab.applaboratorio.Character
 
 data class CharacterDetailScreenState(
     val isLoading: Boolean = true,
-    val data: Character? = CharacterDb().getCharacterById(1),
+    val data: Character? = null,
     val hasError: Boolean = false
 )
