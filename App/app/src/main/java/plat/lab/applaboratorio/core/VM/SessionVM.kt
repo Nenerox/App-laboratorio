@@ -30,6 +30,7 @@ class SessionVM(application: Application): AndroidViewModel(application) {
         )
 
     fun logout() {
+        borrarDatos()
         viewModelScope.launch {
             sessionPreferences.clearSession()
         }
@@ -42,11 +43,8 @@ class SessionVM(application: Application): AndroidViewModel(application) {
         }
     }
 
-    fun reiniciarDatos(){
+    fun cargarDatos(){
         viewModelScope.launch {
-            Dependencias.database.characterDao().deleteAllCharacters()
-            Dependencias.database.locationDao().deleteAllLocations()
-
             val characterDao = Dependencias.database.characterDao()
             val Characters = CharacterDb().getAllCharacters()
 
@@ -64,8 +62,13 @@ class SessionVM(application: Application): AndroidViewModel(application) {
                 }
             )
         }
+    }
 
-
+    private fun borrarDatos(){
+        viewModelScope.launch {
+            Dependencias.database.characterDao().deleteAllCharacters()
+            Dependencias.database.locationDao().deleteAllLocations()
+        }
     }
 
     init {
