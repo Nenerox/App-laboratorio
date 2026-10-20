@@ -10,9 +10,10 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import plat.lab.applaboratorio.core.data.Dependencias
 import plat.lab.applaboratorio.locations.VM.LocationDetails.LocationDetailEvent
 import plat.lab.applaboratorio.locations.VM.LocationDetails.LocationDetailScreenState
-import plat.lab.applaboratorio.locations.data.LocationDb
+import plat.lab.applaboratorio.locations.data.mapToModel
 import plat.lab.applaboratorio.locations.ui.details.LocationDetailsDestination
 import kotlin.time.Duration.Companion.seconds
 
@@ -22,10 +23,13 @@ class LocationDetailsVM(savedStateHandle: SavedStateHandle) : ViewModel() {
     private val _state = MutableStateFlow(LocationDetailScreenState())
     val state = _state.asStateFlow()
 
+    private val locationDao = Dependencias.database.locationDao()
+
     private var job: Job? = null
+    private var dataJob: Job? = null
 
     init {
-        retry()
+        startJob()
     }
 
     fun onEvent(event: LocationDetailEvent) {
@@ -35,9 +39,19 @@ class LocationDetailsVM(savedStateHandle: SavedStateHandle) : ViewModel() {
         }
     }
 
+    private fun loadCharacter(){
+        dataJob?.cancel()
+        dataJob = viewModelScope.launch {
+            val entity = locationDao.getLocationsById(currentId)
+            _state.update {
+                it.copy(data = entity.mapToModel())
+            }
+        }
+    }
+
     private fun retry(){
         job?.cancel()
-        _state.update { it.copy(isLoading = true, hasError = false, data = LocationDb().getLocationById(currentId)) }
+        _state.update { it.copy(isLoading = true, hasError = false) }
         startJob()
     }
 
@@ -48,6 +62,7 @@ class LocationDetailsVM(savedStateHandle: SavedStateHandle) : ViewModel() {
 
     private fun startJob() {
         job?.cancel()
+        loadCharacter()
         job = viewModelScope.launch {
             _state.update { it.copy(isLoading = true, hasError = false) }
             delay(2.seconds)
