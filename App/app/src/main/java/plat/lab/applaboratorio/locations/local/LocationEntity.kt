@@ -1,7 +1,8 @@
-package plat.lab.applaboratorio.locations.data
+package plat.lab.applaboratorio.locations.local
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import plat.lab.applaboratorio.locations.data.Location
 
 @Entity
 data class LocationEntity(
@@ -9,7 +10,8 @@ data class LocationEntity(
     val id: Int,
     val name: String,
     val type: String,
-    val dimension: String
+    val dimension: String,
+    val isFavorite: Boolean = false
 )
 
 
@@ -18,6 +20,7 @@ fun LocationEntity.mapToModel(): Location {
         id = id,
         name = name,
         type = type,
-        dimension = dimension
+        dimension = dimension,
+        isFavorite = isFavorite
     )
 }

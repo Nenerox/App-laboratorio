@@ -1,11 +1,13 @@
 package plat.lab.applaboratorio.locations.ui.details
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -16,8 +18,12 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -32,6 +38,7 @@ import kotlinx.serialization.Serializable
 import plat.lab.applaboratorio.ErrorScreen
 import plat.lab.applaboratorio.LoadingScreen
 import plat.lab.applaboratorio.R
+import plat.lab.applaboratorio.character.VM.CharacterDetails.CharacterDetailEvent
 import plat.lab.applaboratorio.character.VM.CharacterList.LocationDetailsVM
 import plat.lab.applaboratorio.locations.VM.LocationDetails.LocationDetailEvent
 import plat.lab.applaboratorio.locations.VM.LocationDetails.LocationDetailScreenState
@@ -111,12 +118,39 @@ private fun LocationDetails(modifier: Modifier = Modifier,
                     onRetry = {onEvent(LocationDetailEvent.onRetry)},
                     Error = "Error al obtener los detalles de la localización intenta de nuevo" )
             } else {
-
-                Text(
-                    location.name,
-                    style = MaterialTheme.typography.titleLarge,
-                    modifier = modifier.padding(top = 20.dp)
-                )
+                var isFavorite by remember(location.id) {
+                    mutableStateOf(location.isFavorite)
+                }
+                Row(
+                    modifier = modifier.fillMaxWidth()
+                        .padding(top = 20.dp, start = 50.dp, end = 50.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.Center
+                ) {
+                    Text(
+                        location.name,
+                        style = MaterialTheme.typography.titleLarge,
+                    )
+                    IconButton(
+                        onClick = {
+                            isFavorite = !isFavorite
+                            onEvent(
+                                LocationDetailEvent.onFavorite(location)
+                            )
+                        }
+                    ) {
+                        Image(
+                            painter = painterResource(id = R.drawable.favorite_star),
+                            contentDescription = "Error",
+                            colorFilter = if (isFavorite) {
+                                ColorFilter.tint(MaterialTheme.colorScheme.onPrimaryFixed)
+                            } else {
+                                ColorFilter.tint(MaterialTheme.colorScheme.onSurface)
+                            },
+                            modifier = modifier.size(100.dp)
+                        )
+                    }
+                }
 
                 Row(
                     modifier = modifier.fillMaxWidth()
@@ -168,7 +202,7 @@ private fun LocationDetails(modifier: Modifier = Modifier,
 @Preview(showBackground = true)
 @Composable
 fun LocationDetailsPreview(){
-    LocationDetails(onBackArrow = {}, state = LocationDetailScreenState(isLoading = false, hasError = false), onEvent = {})
+    LocationDetails(onBackArrow = {}, state = LocationDetailScreenState(isLoading = false, hasError = false, data = LocationDb().getLocationById(1)), onEvent = {})
 }
 
 @Preview(showBackground = true)

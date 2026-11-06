@@ -6,5 +6,6 @@ import plat.lab.applaboratorio.locations.data.LocationDb
 data class LocationScreenState(
     val isLoading: Boolean = true,
     val data: List<Location> = emptyList(),
-    val hasError: Boolean = false
+    val hasError: Boolean = false,
+    val favorites: Boolean = false
 )
