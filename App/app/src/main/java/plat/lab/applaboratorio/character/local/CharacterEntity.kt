@@ -1,4 +1,4 @@
-package plat.lab.applaboratorio.character.data
+package plat.lab.applaboratorio.character.local
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey

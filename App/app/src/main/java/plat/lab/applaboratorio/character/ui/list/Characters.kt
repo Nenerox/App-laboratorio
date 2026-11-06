@@ -11,10 +11,9 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.IconToggleButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
@@ -38,13 +37,13 @@ import androidx.navigation.compose.composable
 import coil.compose.AsyncImage
 import kotlinx.serialization.Serializable
 import plat.lab.applaboratorio.Character
-import plat.lab.applaboratorio.CharacterDb
 import plat.lab.applaboratorio.ErrorScreen
 import plat.lab.applaboratorio.LoadingScreen
 import plat.lab.applaboratorio.R
 import plat.lab.applaboratorio.character.VM.CharacterList.CharacterScreenEvent
 import plat.lab.applaboratorio.character.VM.CharacterList.CharacterScreenState
 import plat.lab.applaboratorio.character.VM.CharacterList.CharacterVM
+import plat.lab.applaboratorio.character.data.CharacterDb
 import plat.lab.applaboratorio.ui.theme.AppLaboratorioTheme
 
 
@@ -55,18 +54,22 @@ fun NavController.navigateToCharacters(navOptions: NavOptions? = null) {
     navigate(CharacterListDestination, navOptions)
 }
 
-fun NavGraphBuilder.charactersScreen(onCharacterClick: (Int) -> Unit) {
+fun NavGraphBuilder.charactersScreen(onCharacterClick: (Int) -> Unit,
+                                     onAddCharacter: () -> Unit) {
     composable<CharacterListDestination> {
-        CharacterListRoute(onCharacterClick = onCharacterClick)
+        CharacterListRoute(onCharacterClick = onCharacterClick,
+            onAddCharacter = onAddCharacter)
     }
 }
 
 @Composable
 fun CharacterListRoute(onCharacterClick: (Int) -> Unit,
+                       onAddCharacter: () -> Unit,
                        viewModel: CharacterVM = viewModel()
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
     CharacterList(onCharacterClick = onCharacterClick,
+        onAddCharacter = onAddCharacter,
         state = state,
         onEvent = viewModel::onEvent)
 }
@@ -77,10 +80,10 @@ private fun CharacterList(
     modifier: Modifier = Modifier,
     onCharacterClick: (Int) -> Unit,
     state: CharacterScreenState,
-    onEvent: (CharacterScreenEvent) -> Unit
+    onEvent: (CharacterScreenEvent) -> Unit,
+    onAddCharacter: () -> Unit = {}
 ){
-    val CharacterList: List<Character>
-    CharacterList = state.data
+    val CharacterList: List<Character> = state.data
 
     if(state.isLoading) {
         LoadingScreen(
@@ -109,6 +112,14 @@ private fun CharacterList(
                     }
                 }
             )
+            Button(
+                onClick = onAddCharacter,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp, vertical = 8.dp)
+            ) {
+                Text("Agregar personaje")
+            }
             if (state.favorites){
                 if (CharacterList.isEmpty()){
                     Column(modifier = modifier.fillMaxSize(),
@@ -120,7 +131,7 @@ private fun CharacterList(
                     }
                 } else {
                     LazyColumn(modifier = modifier) {
-                        items(CharacterList.size) { it ->
+                        items(CharacterList.size) {
                             CharacterPlate(
                                 name = CharacterList[it].name,
                                 status = CharacterList[it].status,
@@ -128,8 +139,10 @@ private fun CharacterList(
                                 link = CharacterList[it].image,
                                 isFavorite = CharacterList[it].isFavorite,
                                 onFavorite = {onEvent(CharacterScreenEvent.onFavorite
-                                    (id = CharacterList[it].id,
-                                    isFavorite = !CharacterList[it].isFavorite)
+                                    (character = CharacterList[it])
+                                )},
+                                onDelete = {onEvent(CharacterScreenEvent.onDelete
+                                    (character = CharacterList[it])
                                 )},
                                 onCharacterClick = { onCharacterClick(CharacterList[it].id) }
                             )
@@ -138,7 +151,7 @@ private fun CharacterList(
                 }
             } else {
                 LazyColumn(modifier = modifier) {
-                    items(CharacterList.size) { it ->
+                    items(CharacterList.size) {
                         CharacterPlate(
                             name = CharacterList[it].name,
                             status = CharacterList[it].status,
@@ -146,8 +159,10 @@ private fun CharacterList(
                             link = CharacterList[it].image,
                             isFavorite = CharacterList[it].isFavorite,
                             onFavorite = {onEvent(CharacterScreenEvent.onFavorite
-                                (id = CharacterList[it].id,
-                                isFavorite = !CharacterList[it].isFavorite)
+                                (character = CharacterList[it])
+                            )},
+                            onDelete = {onEvent(CharacterScreenEvent.onDelete
+                                (character = CharacterList[it])
                             )},
                             onCharacterClick = { onCharacterClick(CharacterList[it].id) }
                         )
@@ -166,7 +181,8 @@ fun CharacterPlate(modifier: Modifier = Modifier,
                    link: String,
                    isFavorite: Boolean = false,
                    onFavorite: () -> Unit = {},
-                   onCharacterClick: () -> Unit = {})
+                   onCharacterClick: () -> Unit = {},
+                   onDelete: () -> Unit = {})
 {
     Row(
         modifier = modifier
@@ -196,12 +212,19 @@ fun CharacterPlate(modifier: Modifier = Modifier,
         }
         IconButton(onClick = onFavorite) {
             Image(painter = painterResource(id = R.drawable.favorite_star),
-                contentDescription = "Error",
+                contentDescription = "favorite",
                 colorFilter = if (isFavorite) {
                     ColorFilter.tint(MaterialTheme.colorScheme.onPrimaryFixed)
                 } else {
                     ColorFilter.tint(MaterialTheme.colorScheme.onSurface)
                 },
+                modifier = modifier.size(100.dp)
+            )
+        }
+        IconButton(onClick = onDelete){
+            Image(painter = painterResource(id = R.drawable.delete_icon),
+                contentDescription = "Delete",
+                colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.onSurface),
                 modifier = modifier.size(100.dp)
             )
         }

@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -36,15 +37,15 @@ import androidx.navigation.NavOptions
 import androidx.navigation.compose.composable
 import coil.compose.AsyncImage
 import kotlinx.serialization.Serializable
-import plat.lab.applaboratorio.CharacterDb
 import plat.lab.applaboratorio.ErrorScreen
 import plat.lab.applaboratorio.LoadingScreen
 import plat.lab.applaboratorio.R
 import plat.lab.applaboratorio.character.VM.CharacterDetails.CharacterDetailEvent
 import plat.lab.applaboratorio.character.VM.CharacterDetails.CharacterDetailScreenState
 import plat.lab.applaboratorio.character.VM.CharacterList.CharacterDetailsVM
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
+import plat.lab.applaboratorio.character.data.CharacterDb
+
 @Serializable
 data class CharacterDetailsDestination(val Id: Int)
 
@@ -55,10 +56,12 @@ fun NavController.navigateToCharacterDetail(
     navigate(CharacterDetailsDestination(Id), navOptions)
 }
 
-fun NavGraphBuilder.characterDetailScreen(onBackArrow: () -> Unit) {
+fun NavGraphBuilder.characterDetailScreen(onBackArrow: () -> Unit,
+                                          onEdit: (Int) -> Unit) {
     composable<CharacterDetailsDestination> {
         CharacterDetailRoute(
-            onBackArrow = onBackArrow
+            onBackArrow = onBackArrow,
+            onEdit = onEdit
         )
     }
 }
@@ -66,14 +69,16 @@ fun NavGraphBuilder.characterDetailScreen(onBackArrow: () -> Unit) {
 @Composable
 fun CharacterDetailRoute(
     onBackArrow: () -> Unit,
-    viewModel: CharacterDetailsVM = viewModel()
+    viewModel: CharacterDetailsVM = viewModel(),
+    onEdit: (Int) -> Unit
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
 
     CharacterDetails(
         onBackArrow = onBackArrow,
         state = state,
-        onEvent = viewModel::onEvent
+        onEvent = viewModel::onEvent,
+        onEdit = onEdit
     )
 }
 
@@ -83,7 +88,8 @@ private fun CharacterDetails(
     modifier: Modifier = Modifier,
     onBackArrow: () -> Unit,
     state: CharacterDetailScreenState,
-    onEvent: (CharacterDetailEvent) -> Unit
+    onEvent: (CharacterDetailEvent) -> Unit,
+    onEdit: (Int) -> Unit = {}
 ){
     Column(modifier = modifier
         .fillMaxSize(),
@@ -140,10 +146,7 @@ private fun CharacterDetails(
                     onClick = {
                         isFavorite = !isFavorite
                         onEvent(
-                            CharacterDetailEvent.onFavorite(
-                                id = character.id,
-                                isFavorite = isFavorite
-                            )
+                            CharacterDetailEvent.onFavorite(character)
                         )
                     }
                 ) {
@@ -159,7 +162,13 @@ private fun CharacterDetails(
                     )
                 }
             }
-
+            Button(
+                onClick = {
+                    onEdit(character.id)
+                }
+            ) {
+                Text("Editar personaje")
+            }
             Row(
                 modifier = modifier.fillMaxWidth()
                     .padding(top = 20.dp, start = 50.dp, end = 50.dp),

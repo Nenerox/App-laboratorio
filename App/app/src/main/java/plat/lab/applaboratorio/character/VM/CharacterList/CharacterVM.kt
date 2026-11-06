@@ -1,6 +1,7 @@
 package plat.lab.applaboratorio.character.VM.CharacterList
 
-import androidx.lifecycle.ViewModel
+import android.app.Application
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -8,18 +9,14 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import plat.lab.applaboratorio.CharacterDb
-import plat.lab.applaboratorio.character.data.mapToModel
-import plat.lab.applaboratorio.core.data.Dependencias
-import plat.lab.applaboratorio.ui.theme.favorite
+import plat.lab.applaboratorio.AppLaboratorio
+import plat.lab.applaboratorio.character.local.mapToModel
 import kotlin.time.Duration.Companion.seconds
 
-class CharacterVM : ViewModel() {
+class CharacterVM(application: Application): AndroidViewModel(application) {
     private val _state = MutableStateFlow(CharacterScreenState())
     val state = _state.asStateFlow()
-
-    private val characterDao = Dependencias.database.characterDao()
-
+    private val characterRepository = (application as AppLaboratorio).CharacterRepository
     private var job: Job? = null
     private var dataJob: Job? = null
 
@@ -34,7 +31,12 @@ class CharacterVM : ViewModel() {
             CharacterScreenEvent.onFavoritesPage -> favoritesList()
             is CharacterScreenEvent.onFavorite -> {
                 viewModelScope.launch {
-                    characterDao.updateFavorite(event.id, event.isFavorite)
+                    characterRepository.updateFavorite(event.character)
+                }
+            }
+            is CharacterScreenEvent.onDelete -> {
+                viewModelScope.launch {
+                    characterRepository.deleteCharacter(event.character)
                 }
             }
         }
@@ -49,18 +51,12 @@ class CharacterVM : ViewModel() {
         dataJob?.cancel()
         dataJob = viewModelScope.launch {
             val charactersFlow = if (_state.value.favorites) {
-                characterDao.getFavoriteCharacters()
+                characterRepository.getFavoriteCharacters()
             } else {
-                characterDao.getCharacters()
+                characterRepository.getCharacters()
             }
-            charactersFlow.collect { entities ->
-                _state.update {
-                    it.copy(
-                        data = entities.map {
-                            it.mapToModel()
-                        }
-                    )
-                }
+            charactersFlow.collect { characters ->
+                _state.update { it.copy(data = characters) }
             }
         }
     }

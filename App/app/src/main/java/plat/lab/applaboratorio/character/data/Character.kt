@@ -1,6 +1,6 @@
 package plat.lab.applaboratorio
 
-import plat.lab.applaboratorio.character.data.CharacterEntity
+import plat.lab.applaboratorio.character.local.CharacterEntity
 
 data class Character(
     val id: Int,

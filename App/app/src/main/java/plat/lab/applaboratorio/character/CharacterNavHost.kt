@@ -5,6 +5,9 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavOptions
 import androidx.navigation.navigation
 import kotlinx.serialization.Serializable
+import plat.lab.applaboratorio.character.ui.CharacterForm.CharacterFormDestination
+import plat.lab.applaboratorio.character.ui.CharacterForm.characterFormScreen
+import plat.lab.applaboratorio.character.ui.CharacterForm.navigateToCharacterForm
 import plat.lab.applaboratorio.character.ui.details.characterDetailScreen
 import plat.lab.applaboratorio.character.ui.details.navigateToCharacterDetail
 import plat.lab.applaboratorio.character.ui.list.CharacterListDestination
@@ -19,7 +22,20 @@ fun NavController.navigateToCharacterNest(navOptions: NavOptions? = null) {
 
 fun NavGraphBuilder.characterNestNav(navController: NavController) {
     navigation<CharacterNestNav>(startDestination = CharacterListDestination){
-        charactersScreen(onCharacterClick = { id -> navController.navigateToCharacterDetail(id) })
-        characterDetailScreen(onBackArrow = { navController.navigateUp() })
+        charactersScreen(
+            onCharacterClick = { id -> navController.navigateToCharacterDetail(id) },
+            onAddCharacter = { navController.navigate(CharacterFormDestination()) }
+        )
+        characterDetailScreen(
+            onBackArrow = { navController.navigateUp() },
+            onEdit = { id -> navController.navigateToCharacterForm(characterId = id) })
+        characterFormScreen(
+            onBack = {
+                navController.popBackStack(
+                    route = CharacterListDestination,
+                    inclusive = false
+                )
+            }
+        )
     }
 }
