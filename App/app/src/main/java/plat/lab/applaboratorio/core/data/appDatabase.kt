@@ -2,10 +2,10 @@ package plat.lab.applaboratorio.core.data
 
 import androidx.room.Database
 import androidx.room.RoomDatabase
-import plat.lab.applaboratorio.character.data.CharacterDao
-import plat.lab.applaboratorio.character.data.CharacterEntity
-import plat.lab.applaboratorio.locations.data.LocationDao
-import plat.lab.applaboratorio.locations.data.LocationEntity
+import plat.lab.applaboratorio.character.local.CharacterDao
+import plat.lab.applaboratorio.character.local.CharacterEntity
+import plat.lab.applaboratorio.locations.local.LocationDao
+import plat.lab.applaboratorio.locations.local.LocationEntity
 
 @Database(
     entities = [
